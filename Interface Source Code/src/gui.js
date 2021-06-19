@@ -83,7 +83,6 @@ const tournamentInp = document.getElementById('tournamentName');
 
 const casters = document.getElementsByClassName("caster");
 
-const noLoAHDCheck = document.getElementById('noLoAHD');
 const forceWL = document.getElementById('forceWLToggle');
 
 
@@ -186,7 +185,6 @@ function init() {
 
     //set listeners for the settings checkboxes
     forceWL.addEventListener("click", forceWLtoggles);
-    document.getElementById('forceHD').addEventListener("click", HDtoggle);
     document.getElementById("copyMatch").addEventListener("click", copyMatch)
 
 
@@ -1138,15 +1136,6 @@ function forceWLtoggles() {
     }
 }
 
-//just enables or disables the second forceHD option
-function HDtoggle() {
-    if (this.checked) {
-        noLoAHDCheck.disabled = false;
-    } else {
-        noLoAHDCheck.disabled = true;
-    }
-}
-
 //will copy the current match info to the clipboard
 // Format: "Tournament Name - Round - Player1 (Character1) VS Player2 (Character2)"
 function copyMatch() {
@@ -1193,9 +1182,6 @@ function writeScoreboard() {
         tournamentName: tournamentInp.value,
         caster: [],
         allowIntro: document.getElementById('allowIntro').checked,
-        forceHD: document.getElementById('forceHD').checked,
-        noLoAHD: noLoAHDCheck.checked,
-        forceMM: document.getElementById('forceMM').checked
     };
     //add the player's info to the player section of the json
     for (let i = 0; i < maxPlayers; i++) {
