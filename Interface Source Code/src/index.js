@@ -17,12 +17,12 @@ const createWindow = () => {
     maxWidth: 600,
 
     //linux
-    minHeight: 300,
-    maxHeight: 300,
+    /* minHeight: 300,
+    maxHeight: 300, */
 
     //windows
-    /* minHeight: 358,
-    maxHeight: 358, */
+    minHeight: 358,
+    maxHeight: 358,
 
     webPreferences: {
       nodeIntegration: true,
