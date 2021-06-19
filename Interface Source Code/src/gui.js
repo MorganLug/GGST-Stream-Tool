@@ -22,7 +22,7 @@ let colorL, colorR;
 
 let currentP1WL = "Nada";
 let currentP2WL = "Nada";
-let currentBestOf = "Bo5";
+let currentBestOf = "Bo9";
 
 let gamemode = 1;
 
@@ -31,15 +31,13 @@ let movedSettings = false;
 let inPF = false;
 let currentFocus = -1;
 
-const maxPlayers = 4; //change this if you ever want to remake this into singles only or 3v3 idk
+const maxPlayers = 2; //change this if you ever want to remake this into singles only or 3v3 idk
 
 
 //preload  e v e r y t h i n g
 const viewport = document.getElementById('viewport');
 const overlayDiv = document.getElementById('overlay');
 const goBackDiv = document.getElementById('goBack');
-
-const tNameInps = document.getElementsByClassName("teamName");
 
 //we want the correct order, we cant use getClassName here
 function pushArrayInOrder(array, string1, string2 = "") {
@@ -59,9 +57,13 @@ const charImgs = document.getElementsByClassName("charImg");
 const p1Win1 = document.getElementById('winP1-1');
 const p1Win2 = document.getElementById('winP1-2');
 const p1Win3 = document.getElementById('winP1-3');
+const p1Win4 = document.getElementById('winP1-4');
+const p1Win5 = document.getElementById('winP1-5');
 const p2Win1 = document.getElementById('winP2-1');
 const p2Win2 = document.getElementById('winP2-2');
 const p2Win3 = document.getElementById('winP2-3');
+const p2Win4 = document.getElementById('winP2-4');
+const p2Win5 = document.getElementById('winP2-5');
 
 const checks = document.getElementsByClassName("scoreCheck");
 
@@ -73,6 +75,8 @@ const p2L = document.getElementById('p2L');
 
 const bo3Div = document.getElementById("bo3Div");
 const bo5Div = document.getElementById("bo5Div");
+const bo7Div = document.getElementById("bo7Div");
+const bo9Div = document.getElementById("bo9Div");
 
 const roundInp = document.getElementById('roundName');
 const tournamentInp = document.getElementById('tournamentName');
@@ -126,6 +130,10 @@ function init() {
     p2Win2.addEventListener("click", changeScoreTicks2);
     p1Win3.addEventListener("click", changeScoreTicks3);
     p2Win3.addEventListener("click", changeScoreTicks3);
+    p1Win4.addEventListener("click", changeScoreTicks4);
+    p2Win4.addEventListener("click", changeScoreTicks4);
+    p1Win5.addEventListener("click", changeScoreTicks5);
+    p2Win5.addEventListener("click", changeScoreTicks5);
 
     //set click listeners for the [W] and [L] buttons
     p1W.addEventListener("click", setWLP1);
@@ -154,17 +162,18 @@ function init() {
     //set click listeners to change the "best of" status
     bo3Div.addEventListener("click", changeBestOf);
     bo5Div.addEventListener("click", changeBestOf);
+    bo7Div.addEventListener("click", changeBestOf);
+    bo9Div.addEventListener("click", changeBestOf);
     //set initial value
     bo3Div.style.color = "var(--text2)";
-    bo5Div.style.backgroundImage = "linear-gradient(to top, #575757, #00000000)";
+    bo5Div.style.color = "var(--text2)";
+    bo7Div.style.color = "var(--text2)";
+    bo9Div.style.backgroundImage = "linear-gradient(to top, #575757, #00000000)";
+    
 
 
     //check if the round is grand finals
     roundInp.addEventListener("input", checkRound);
-
-
-    //gamemode button
-    document.getElementById("gamemode").addEventListener("click", changeGamemode);
 
 
     //add a listener to the swap button
@@ -338,17 +347,6 @@ function charChange(list) {
         charImgChange(charImgs[pNum-1], currentChar, currentSkin);
     }
     
-    //hide the skin dropdown if the list has 1 or less entries
-    if (gamemode == 1 && (pNum == 3 || pNum == 4)) {
-        //dont do this for players 3 and 4 if the gamemode is singles
-    } else {
-        if (skinList.options.length <= 1) {
-            skinList.style.display = "none";
-        } else {
-            skinList.style.display = "inline";
-        }
-    }
-    
 
     //check if the current player name has a custom skin for the character
     checkCustomSkin(pNum);
@@ -519,29 +517,55 @@ function updateColor() {
 function changeScoreTicks1() {
     const pNum = this == p1Win1 ? 1 : 2;
 
-    //deactivate wins 2 and 3
+    //deactivate wins 2, 3, 4 and 5
     document.getElementById('winP'+pNum+'-2').checked = false;
     document.getElementById('winP'+pNum+'-3').checked = false;
+    document.getElementById('winP'+pNum+'-4').checked = false;
+    document.getElementById('winP'+pNum+'-5').checked = false;
 }
 //whenever clicking on the second score tick
 function changeScoreTicks2() {
     const pNum = this == p1Win2 ? 1 : 2;
 
-    //deactivate win 3, activate win 1
+    //deactivate win 3, 4 and 5, activate win 1
     document.getElementById('winP'+pNum+'-1').checked = true;
     document.getElementById('winP'+pNum+'-3').checked = false;
+    document.getElementById('winP'+pNum+'-4').checked = false;
+    document.getElementById('winP'+pNum+'-5').checked = false;
 }
 //something something the third score tick
 function changeScoreTicks3() {
     const pNum = this == p1Win3 ? 1 : 2;
 
-    //activate wins 1 and 2
+    //deactivate win 4 and 5,activate wins 1 and 2
     document.getElementById('winP'+pNum+'-1').checked = true;
     document.getElementById('winP'+pNum+'-2').checked = true;
+    document.getElementById('winP'+pNum+'-4').checked = false;
+    document.getElementById('winP'+pNum+'-5').checked = false;
+}
+
+function changeScoreTicks4() {
+    const pNum = this == p1Win4 ? 1 : 2;
+
+    //deactivate win 5, activate wins 1, 2, 3
+    document.getElementById('winP'+pNum+'-1').checked = true;
+    document.getElementById('winP'+pNum+'-2').checked = true;
+    document.getElementById('winP'+pNum+'-3').checked = true;
+    document.getElementById('winP'+pNum+'-5').checked = false;
+}
+
+function changeScoreTicks5() {
+    const pNum = this == p1Win5 ? 1 : 2;
+
+    //activate wins 1, 2, 3 and 4
+    document.getElementById('winP'+pNum+'-1').checked = true;
+    document.getElementById('winP'+pNum+'-2').checked = true;
+    document.getElementById('winP'+pNum+'-3').checked = true;
+    document.getElementById('winP'+pNum+'-4').checked = true;
 }
 
 //returns how much score does a player have
-function checkScore(tick1, tick2, tick3) {
+function checkScore(tick1, tick2, tick3, tick4, tick5) {
     let totalScore = 0;
 
     if (tick1.checked) {
@@ -551,6 +575,12 @@ function checkScore(tick1, tick2, tick3) {
         totalScore++;
     }
     if (tick3.checked) {
+        totalScore++;
+    }
+    if (tick4.checked) {
+        totalScore++;
+    }
+    if (tick5.checked) {
         totalScore++;
     }
 
@@ -868,24 +898,68 @@ function getTextWidth(text, font) {
 
 //used when clicking on the "Best of" buttons
 function changeBestOf() {
-    let theOtherBestOf; //we always gotta know
-    if (this == bo5Div) {
-        currentBestOf = "Bo5";
-        theOtherBestOf = bo3Div;
-        p1Win3.style.display = "block";
-        p2Win3.style.display = "block";
-    } else {
-        currentBestOf = "Bo3";
-        theOtherBestOf = bo5Div;
-        p1Win3.style.display = "none";
-        p2Win3.style.display = "none";
+    let theOtherBestOfs;//we always gotta know
+
+    switch (this) {
+        case bo3Div:
+            currentBestOf = "Bo3"
+            p1Win3.style.display = "none";
+            p2Win3.style.display = "none";
+            p1Win4.style.display = "none";
+            p2Win4.style.display = "none";
+            p1Win5.style.display = "none";
+            p2Win5.style.display = "none";
+            theOtherBestOfs = [bo5Div, bo7Div, bo9Div];
+            
+            break;
+
+        case bo5Div:
+            currentBestOf = "Bo5"
+            p1Win3.style.display = "block";
+            p2Win3.style.display = "block";
+            p1Win4.style.display = "none";
+            p2Win4.style.display = "none";
+            p1Win5.style.display = "none";
+            p2Win5.style.display = "none";
+            theOtherBestOfs = [bo3Div, bo7Div, bo9Div];
+
+            break;
+
+        case bo7Div:
+            currentBestOf = "Bo7"
+            p1Win3.style.display = "block";
+            p2Win3.style.display = "block";
+            p1Win4.style.display = "block";
+            p2Win4.style.display = "block";
+            p1Win5.style.display = "none";
+            p2Win5.style.display = "none";
+            theOtherBestOfs = [bo3Div, bo5Div, bo9Div];
+
+            break;
+
+        case bo9Div:
+            currentBestOf = "Bo9"
+            p1Win3.style.display = "block";
+            p2Win3.style.display = "block";
+            p1Win4.style.display = "block";
+            p2Win4.style.display = "block";
+            p1Win5.style.display = "block";
+            p2Win5.style.display = "block";
+            theOtherBestOfs = [bo3Div, bo5Div, bo7Div];
+
+            break;
+    
+        default:
+            break;
     }
 
     //change the color and background of the buttons
     this.style.color = "var(--text1)";
     this.style.backgroundImage = "linear-gradient(to top, #575757, #00000000)";
-    theOtherBestOf.style.color = "var(--text2)";
-    theOtherBestOf.style.backgroundImage = "var(--bg4)";
+    theOtherBestOfs.forEach(element => {
+        element.style.color = "var(--text2)";
+        element.style.backgroundImage = "var(--bg4)";
+    });
 }
 
 
@@ -906,147 +980,7 @@ function checkRound() {
 }
 
 
-//called when clicking on the gamemode icon, cycles through singles and doubles
-function changeGamemode() {
-
-    //things are about to get messy
-    if (gamemode == 1) {
-        
-        gamemode = 2;
-
-        //show singles icon
-        gmIcon2.style.opacity = 0;
-        gmIcon1.style.left = "11px"; 
-        
-        //hide the background character image to reduce clutter
-        charImgs[0].style.opacity = 0;
-        charImgs[1].style.opacity = 0;
-
-        //add some margin to the color buttons, change border radius
-        const lColor = document.getElementById("lColor");
-        lColor.style.marginLeft = "5px";
-        lColor.style.borderTopLeftRadius = "3px";
-        lColor.style.borderBottomLeftRadius = "3px";
-        const rColor = document.getElementById("rColor");
-        rColor.style.marginLeft = "5px";
-        rColor.style.borderTopLeftRadius = "3px";
-        rColor.style.borderBottomLeftRadius = "3px";
-
-        for (let i = 1; i < 3; i++) {
-            document.getElementById("row1-"+i).insertAdjacentElement("afterbegin", wlButtons[i-1]);
-            document.getElementById("row1-"+i).insertAdjacentElement("afterbegin", document.getElementById('scoreBox'+i));
-            
-            document.getElementById("scoreText"+i).style.display = "none";
-
-            tNameInps[i-1].style.display = "block";
-
-            document.getElementById("row1-"+i).insertAdjacentElement("afterbegin", tNameInps[i-1]);
-
-            document.getElementById('row2-'+i).insertAdjacentElement("beforeend", document.getElementById('pInfo'+i));
-
-            charLists[i+1].style.display = "block";
-            if (skinLists[i+1].options.length <= 1) {
-                skinLists[i+1].style.display = "none";
-            } else {
-                skinLists[i+1].style.display = "block";
-            }
-
-            document.getElementById('pInfo'+(i+2)).style.display = "block";
-        }
-
-        //add some left margin to the name/tag inputs, add border radius, change max width
-        for (let i = 0; i < maxPlayers; i++) {
-            pTagInps[i].style.marginLeft = "5px";
-
-            pNameInps[i].style.borderTopRightRadius = "3px";
-            pNameInps[i].style.borderBottomRightRadius = "3px";
-
-            pTagInps[i].style.maxWidth = "45px"
-            pNameInps[i].style.maxWidth = "94px"
-            
-            charLists[i].style.maxWidth = "65px";
-            skinLists[i].style.maxWidth = "65px";
-        }
-
-
-        //change the hover tooltip
-        this.setAttribute('title', "Change the gamemode to Singles");
-
-        //dropdown menus for the right side will now be positioned to the right
-        for (let i = 1; i < 5; i+=2) {
-            pFinders[i].style.right = "0px";
-            pFinders[i].style.left = "";
-        }
-        document.getElementById("dropdownColorR").style.right = "0px";
-        document.getElementById("dropdownColorR").style.left = "";
-
-    } else if (gamemode == 2) {
-
-        gamemode = 1;
-
-        //show doubles icon
-        gmIcon2.style.opacity = 1;
-        gmIcon1.style.left = "4px";
-        gmIcon2.style.left = "17px";
-
-        //remove color button margin, change border radius
-        const lColor = document.getElementById("lColor");
-        lColor.style.marginLeft = "0px";
-        lColor.style.borderTopLeftRadius = "0px";
-        lColor.style.borderBottomLeftRadius = "0px";
-        const rColor = document.getElementById("rColor");
-        rColor.style.marginLeft = "0px";
-        rColor.style.borderTopLeftRadius = "0px";
-        rColor.style.borderBottomLeftRadius = "0px";        
-
-        //move everything back to normal
-        for (let i = 1; i < 3; i++) {
-            charImgs[i-1].style.opacity = 1;
-
-            tNameInps[i-1].style.display = "none";
-            charLists[i+1].style.display = "none";
-            skinLists[i+1].style.display = "none";
-
-            document.getElementById('pInfo'+(i+2)).style.display = "none";
-
-            document.getElementById("row3-"+i).insertAdjacentElement("afterbegin", wlButtons[i-1]);
-            document.getElementById("row3-"+i).insertAdjacentElement("afterbegin", document.getElementById('scoreBox'+i));
-            document.getElementById("scoreText"+i).style.display = "block";
-        
-            document.getElementById('row1-'+i).insertAdjacentElement("afterbegin", document.getElementById('pInfo'+i));
-        
-        }
-
-        for (let i = 0; i < maxPlayers; i++) {
-            pTagInps[i].style.marginLeft = "0px";
-
-            pNameInps[i].style.borderTopRightRadius = "0px";
-            pNameInps[i].style.borderBottomRightRadius = "0px";
-
-            pTagInps[i].style.maxWidth = "70px"
-            pNameInps[i].style.maxWidth = "173px"
-            
-            charLists[i].style.maxWidth = "141px";
-            skinLists[i].style.maxWidth = "141px";
-        }
-
-        this.setAttribute('title', "Change the gamemode to Doubles");
-
-        //dropdown menus for the right side will now be positioned to the left
-        for (let i = 1; i < 5; i+=2) {
-            pFinders[i].style.left = "0px";
-            pFinders[i].style.right = "";
-        }
-    }
-}
-
-
 function swap() {
-
-    //team name
-    const teamStore = tNameInps[0].value;
-    tNameInps[0].value = tNameInps[1].value;
-    tNameInps[1].value = teamStore;
 
     for (let i = 0; i < maxPlayers; i+=2) {
 
@@ -1103,10 +1037,10 @@ function swap() {
     }    
 
     //scores
-    const tempP1Score = checkScore(p1Win1, p1Win2, p1Win3);
-    const tempP2Score = checkScore(p2Win1, p2Win2, p2Win3);
-    setScore(tempP2Score, p1Win1, p1Win2, p1Win3);
-    setScore(tempP1Score, p2Win1, p2Win2, p2Win3);
+    const tempP1Score = checkScore(p1Win1, p1Win2, p1Win3, p1Win4, p1Win5);
+    const tempP2Score = checkScore(p2Win1, p2Win2, p2Win3, p2Win4, p2Win5);
+    setScore(tempP2Score, p1Win1, p1Win2, p1Win3, p1Win4, p1Win5);
+    setScore(tempP1Score, p2Win1, p2Win2, p2Win3, p2Win4, p2Win5);
 
     //W/K, only if they are visible
     if (p1W.style.display = "flex") {
@@ -1128,11 +1062,6 @@ function swap() {
 }
 
 function clearPlayers() {
-
-    //crear the team names
-    for (let i = 0; i < tNameInps.length; i++) {
-        tNameInps[i].value = "";        
-    }
 
     for (let i = 0; i < maxPlayers; i++) {
 
@@ -1172,16 +1101,24 @@ function changeListValue(list, name) {
 }
 
 //manually sets the player's score
-function setScore(score, tick1, tick2, tick3) {
+function setScore(score, tick1, tick2, tick3, tick4, tick5) {
     tick1.checked = false;
     tick2.checked = false;
     tick3.checked = false;
+    tick4.checked = false;
+    tick5.checked = false;
     if (score > 0) {
         tick1.checked = true;
         if (score > 1) {
             tick2.checked = true;
             if (score > 2) {
                 tick3.checked = true;
+                if (score > 3) {
+                    tick4.checked = true;
+                    if (score > 4) {
+                        tick5.checked = true;
+                    }
+                }
             }
         }
     }
@@ -1217,19 +1154,15 @@ function copyMatch() {
     //initialize the string
     let copiedText = tournamentInp.value + " - " + roundInp.value + " - ";
 
-    if (gamemode == 1) { //for singles matches
-        //check if the player has a tag to add
-        if (pTagInps[0].value) {
-            copiedText += pTagInps[0].value + " | ";
-        }
-        copiedText += pNameInps[0].value + " (" + charLists[0].selectedOptions[0].text +") VS ";
-        if (pTagInps[1].value) {
-            copiedText += pTagInps[1].value + " | ";
-        }
-        copiedText += pNameInps[1].value + " (" + charLists[1].selectedOptions[0].text +")";
-    } else { //for team matches
-        copiedText += tNameInps[0].value + " VS " + tNameInps[1].value;
+    //check if the player has a tag to add
+    if (pTagInps[0].value) {
+        copiedText += pTagInps[0].value + " | ";
     }
+    copiedText += pNameInps[0].value + " (" + charLists[0].selectedOptions[0].text +") VS ";
+    if (pTagInps[1].value) {
+        copiedText += pTagInps[1].value + " | ";
+    }
+    copiedText += pNameInps[1].value + " (" + charLists[1].selectedOptions[0].text +")";
 
     //send the string to the user's clipboard
     navigator.clipboard.writeText(copiedText);
@@ -1242,17 +1175,13 @@ function writeScoreboard() {
     //this is what's going to be in the json file
     const scoreboardJson = {
         player: [], //more lines will be added below
-        teamName: [
-            tNameInps[0].value,
-            tNameInps[1].value
-        ],
         color: [
             colorL,
             colorR
         ],
         score: [
-            checkScore(p1Win1, p1Win2, p1Win3),
-            checkScore(p2Win1, p2Win2, p2Win3)
+            checkScore(p1Win1, p1Win2, p1Win3, p1Win4, p1Win5),
+            checkScore(p2Win1, p2Win2, p2Win3, p2Win4, p2Win5)
         ],
         wl: [
             currentP1WL,
@@ -1305,11 +1234,8 @@ function writeScoreboard() {
         fs.writeFileSync(textPath + "/Simple Texts/Player "+(i+1)+".txt", pNameInps[i].value);        
     }
 
-    fs.writeFileSync(textPath + "/Simple Texts/Team 1.txt", tNameInps[0].value);
-    fs.writeFileSync(textPath + "/Simple Texts/Team 2.txt", tNameInps[1].value);
-
-    fs.writeFileSync(textPath + "/Simple Texts/Score L.txt", checkScore(p1Win1, p1Win2, p1Win3));
-    fs.writeFileSync(textPath + "/Simple Texts/Score R.txt", checkScore(p2Win1, p2Win2, p2Win3));
+    fs.writeFileSync(textPath + "/Simple Texts/Score L.txt", checkScore(p1Win1, p1Win2, p1Win3, p1Win4, p1Win5));
+    fs.writeFileSync(textPath + "/Simple Texts/Score R.txt", checkScore(p2Win1, p2Win2, p2Win3, p2Win4, p2Win5));
 
     fs.writeFileSync(textPath + "/Simple Texts/Round.txt", roundInp.value);
     fs.writeFileSync(textPath + "/Simple Texts/Tournament Name.txt", tournamentInp.value);
