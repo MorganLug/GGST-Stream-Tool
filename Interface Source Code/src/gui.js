@@ -344,7 +344,13 @@ function charChange(list) {
         }
         charImgChange(charImgs[pNum-1], currentChar, currentSkin);
     }
-    
+
+    //hide the skin dropdown if the list has 1 or less entries
+    if (skinList.options.length <= 1) {
+        skinList.style.display = "none";
+    } else {
+        skinList.style.display = "inline";
+    }
 
     //check if the current player name has a custom skin for the character
     checkCustomSkin(pNum);
