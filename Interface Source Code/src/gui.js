@@ -79,7 +79,6 @@ const tournamentInp = document.getElementById('tournamentName');
 
 const casters = document.getElementsByClassName("caster");
 
-const workshopCheck = document.getElementById('workshopToggle');
 const noLoAHDCheck = document.getElementById('noLoAHD');
 const forceWL = document.getElementById('forceWLToggle');
 
@@ -177,7 +176,6 @@ function init() {
     /* SETTINGS */
 
     //set listeners for the settings checkboxes
-    workshopCheck.addEventListener("click", workshopChange);
     forceWL.addEventListener("click", forceWLtoggles);
     document.getElementById('forceHD').addEventListener("click", HDtoggle);
     document.getElementById("copyMatch").addEventListener("click", copyMatch)
@@ -283,17 +281,11 @@ function getJson(jPath) {
 //calls the main settings file and fills a combo list
 function loadCharacters() {
 
-    //check if this is workshop edition or not
-    let path;
-    if (workshopCheck.checked) {
-        path = charPath+"/_Workshop";
-    } else {
-        path = charPath;
-    }
+    let path = charPath;
     
-    //if the folder name contains '_Workshop' or 'Random', exclude it
+    //if the folder name contains 'Random', exclude it
     const characterList = fs.readdirSync(path).filter((name) => {
-        if (name != "_Workshop" && name != "Random") {
+        if (name != "Random") {
             return true;
         }
     });
@@ -406,21 +398,12 @@ function skinChangeL() {
 
 //change the image path depending on the character and skin
 function charImgChange(charImg, charName, skinName) {
-    if (workshopCheck.checked) {
-        charImg.setAttribute('src', charPath + '/_Workshop/' + charName + '/' + skinName + '.png');
-    } else {
         charImg.setAttribute('src', charPath + '/' + charName + '/' + skinName + '.png');
-    }
 }
 
 //will load the skin list of a given character
 function loadSkins(comboList, character) {
-    let charInfo;
-    if (workshopCheck.checked) {
-        charInfo = getJson(charPath + "/_Workshop/" + character + "/_Info");
-    } else {
-        charInfo = getJson(charPath + "/" + character + "/_Info");
-    }
+    let charInfo = getJson(charPath + "/" + character + "/_Info");
 
     clearList(comboList); //clear the past character's skin list
     if (charInfo != undefined) { //if character doesnt have a list (for example: Random), skip this
@@ -730,11 +713,8 @@ function checkPlayerPreset() {
                     //actual image
                     const charImg = document.createElement('img');
                     charImg.className = "pfCharImg";
-                    if (workshopCheck.checked) {
-                        charImg.setAttribute('src', charPath+'/_Workshop/'+char.character+'/'+char.skin+'.png');
-                    } else {
-                        charImg.setAttribute('src', charPath+'/'+char.character+'/'+char.skin+'.png');
-                    }
+                    charImg.setAttribute('src', charPath+'/'+char.character+'/'+char.skin+'.png');
+
                     //we have to position it
                     positionChar(char.character, char.skin, charImg);
                     //and add it to the mask
@@ -755,12 +735,7 @@ function checkPlayerPreset() {
 async function positionChar(character, skin, charEL) {
 
     //get the character positions
-    let charInfo;
-    if (workshopCheck.checked) {
-        charInfo = getJson(charPath + "/_Workshop/" + character + "/_Info");
-    } else {
-        charInfo = getJson(charPath + "/" + character + "/_Info");
-    }
+    let charInfo = getJson(charPath + "/" + character + "/_Info");
 	
 	//             x, y, scale
 	let charPos = [0, 0, 1];
@@ -1212,33 +1187,6 @@ function setScore(score, tick1, tick2, tick3) {
     }
 }
 
-
-//called whenever the user clicks on the workshop toggle
-function workshopChange() {
-    
-    //clear current character lists
-    for (let i = 0; i < maxPlayers; i++) {
-        clearList(charLists[i])        
-    }
-    //then reload character lists
-    loadCharacters();
-    //dont forget to clear the skin lists
-    for (let i = 0; i < maxPlayers; i++) {
-        clearList(skinLists[i])
-        skinLists[i].style.display = "none";
-    }
-
-    //change the Main Menu button for a CSS button
-    if (this.checked) {
-        document.getElementById('mmText').innerText = "CSS renders in Scoreboard"
-        document.getElementById('mmText').title = "Forces showing the Character Select Screen\nrenders (if any) on 'RoA Scoreboard.html'."
-    } else {
-        document.getElementById('mmText').innerText = "Main Menu renders in Scoreboard"
-        document.getElementById('mmText').title = "Forces showing the 'Main Menu' character\nrenders on 'RoA Scoreboard.html'."
-    }
-
-}
-
 //forces the W/L buttons to appear, or unforces them
 function forceWLtoggles() {
     if (forceWL.checked) {
@@ -1316,7 +1264,6 @@ function writeScoreboard() {
         tournamentName: tournamentInp.value,
         caster: [],
         allowIntro: document.getElementById('allowIntro').checked,
-        workshop: workshopCheck.checked,
         forceHD: document.getElementById('forceHD').checked,
         noLoAHD: noLoAHDCheck.checked,
         forceMM: document.getElementById('forceMM').checked

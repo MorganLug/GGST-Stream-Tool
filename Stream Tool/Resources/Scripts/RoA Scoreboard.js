@@ -19,17 +19,15 @@ const roundSize = "19px";
 //to store the current character info
 const pCharInfo = [];
 
-//the characters image file path will change depending if they're workshop or not
-let charPath;
-const charPathBase = "Resources/Characters/";
-const charPathWork = "Resources/Characters/_Workshop/";
+//characters image file path
+const charPath = "Resources/Characters/";
 
 //color list will be stored here on startup
 let colorList;
 
 //to avoid the code constantly running the same method over and over
 const pCharPrev = [], pSkinPrev = [], scorePrev = [], colorPrev = [], wlPrev = [];
-let bestOfPrev, workshopPrev, mainMenuPrev, gamemodePrev;
+let bestOfPrev, mainMenuPrev, gamemodePrev;
 
 //to consider how many loops will we do
 let maxPlayers = 2;
@@ -79,8 +77,6 @@ async function getData(scInfo) {
 	const gamemode = scInfo['gamemode'];
 
 	const round = scInfo['round'];
-
-	const workshop = scInfo['workshop'];
 
 	const mainMenu = scInfo['forceMM'];
 
@@ -181,12 +177,6 @@ async function getData(scInfo) {
 			//lets delay everything that comes after this so it shows after the intro
 			introDelay = 2.6;
 		}
-
-		
-		//finally out of the intro, first things first, set the current char path
-		workshop ? charPath = charPathWork : charPath = charPathBase;
-		//save the current workshop status so we know when it changes next time
-		workshopPrev = workshop;
 
 
 		//if this isnt a singles match, rearrange stuff
@@ -292,12 +282,6 @@ async function getData(scInfo) {
 
 	//now things that will happen constantly
 	else {
-
-		//start by setting the correct char path
-		if (workshopPrev != workshop) {
-			workshop ? charPath = charPathWork : charPath = charPathBase;
-			workshopPrev = workshop;
-		}
 
 		//of course, check if the gamemode has changed
 		if (gamemodePrev != gamemode) {
@@ -738,7 +722,7 @@ function updateChar(pCharacter, pSkin, pNum, charInfo, mainMenu, startup = false
 			charPos[0] = charInfo.scoreboard[pSkin].x;
 			charPos[1] = charInfo.scoreboard[pSkin].y;
 			charPos[2] = charInfo.scoreboard[pSkin].scale;
-		} else if (mainMenu && charInfo.scoreboard.mainMenu) { //for the main menu renders, or some extras for workshop characters
+		} else if (mainMenu && charInfo.scoreboard.mainMenu) { //for the main menu renders
 			charPos[0] = charInfo.scoreboard.mainMenu.x;
 			charPos[1] = charInfo.scoreboard.mainMenu.y;
 			charPos[2] = charInfo.scoreboard.mainMenu.scale;

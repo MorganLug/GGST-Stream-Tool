@@ -19,17 +19,15 @@ const twitterSize = '20px';
 //to store the current character info
 const pCharInfo = [];
 
-//the characters image file path will change depending if they're workshop or not
-let charPath;
-const charPathBase = "Resources/Characters/";
-const charPathWork = "Resources/Characters/_Workshop/";
+//characters image file path
+let charPath = "Resources/Characters/";
 
 //color list will be stored here on startup
 let colorList;
 
 //to avoid the code constantly running the same method over and over
 const pCharPrev = [], pSkinPrev = [], scorePrev = [], colorPrev = [];
-let bestOfPrev, prevWorkshop, gamemodePrev;
+let bestOfPrev, gamemodePrev;
 
 //variables for the twitter/twitch constant change
 let socialInt1, socialInt2;
@@ -98,8 +96,6 @@ async function getData(scInfo) {
 	twitter2 = caster[1].twitter;
 	twitch2 = caster[1].twitch;
 
-	const workshop = scInfo['workshop'];
-
 	//check if we are forcing HD skins
 	if (scInfo['forceHD']) {
 		for (let i = 0; i < 4; i++) {
@@ -121,11 +117,6 @@ async function getData(scInfo) {
 
 	//first, things that will happen only the first time the html loads
 	if (startup) {
-
-		//first things first, set the current char path
-		workshop ? charPath = charPathWork : charPath = charPathBase;
-		//save the current workshop status so we know when it changes next time
-		prevWorkshop = workshop;
 
 		//initialize the colors list
 		colorList = await getColorInfo();
@@ -247,12 +238,6 @@ async function getData(scInfo) {
 
 	//now things that will happen constantly
 	else {
-
-		//start by setting the correct char path
-		if (prevWorkshop != workshop) {
-			workshop ? charPath = charPathWork : charPath = charPathBase;
-			prevWorkshop = workshop;
-		}
 
 		//of course, check if the gamemode has changed
 		if (gamemodePrev != gamemode) {
