@@ -6,7 +6,6 @@ const pCharMove = 20; //distance to move for the character icons
 
 const fadeInTime = .3; //(seconds)
 const fadeOutTime = .2;
-let introDelay = .8; //all animations will get this delay when the html loads (use this so it times with your transition)
 
 //max text sizes (used when resizing back)
 const introSize = "85px";
@@ -27,7 +26,7 @@ let colorList;
 
 //to avoid the code constantly running the same method over and over
 const pCharPrev = [], pSkinPrev = [], scorePrev = [], colorPrev = [], wlPrev = [];
-let bestOfPrev, mainMenuPrev, gamemodePrev;
+let bestOfPrev, mainMenuPrev;
 
 //to consider how many loops will we do
 let maxPlayers = 2;
@@ -44,7 +43,6 @@ let startup = true;
 const pWrapper = document.getElementsByClassName("wrappers");
 const pTag = document.getElementsByClassName("tags");
 const pName = document.getElementsByClassName("names");
-const teamNames = document.getElementsByClassName("teamName");
 const charImg = document.getElementsByClassName("pCharacter");
 const colorImg = document.getElementsByClassName("colors");
 const wlImg = document.getElementsByClassName("wlImg");
@@ -67,7 +65,6 @@ setInterval( () => { mainLoop(); }, 500); //update interval
 async function getData(scInfo) {
 
 	const player = scInfo['player'];
-	const teamName = scInfo['teamName'];
 
 	const color = scInfo['color'];
 	const score = scInfo['score'];
@@ -80,111 +77,11 @@ async function getData(scInfo) {
 
 	const mainMenu = scInfo['forceMM'];
 
-	// if there is no team name, just display "[Color] Team"
-	for (let i = 0; i < maxSides; i++) {
-		if (!teamName[i]) teamName[i] = color[i] + " Team";
-	}
-
-
 	//first, things that will happen only once, when the html loads
 	if (startup) {
 
 		//first things first, initialize the colors list
-		colorList = await getColorInfo();		
-
-		//of course, we have to start with the cool intro stuff
-		if (scInfo['allowIntro']) {
-
-			//lets see that intro
-			document.getElementById('overlayIntro').style.opacity = 1;
-
-			//this vid is just the bars moving (todo: maybe do it through javascript?)
-			setTimeout(() => { 
-				const introVid = document.getElementById('introVid');
-				introVid.src = 'Resources/Overlay/Scoreboard/Intro.webm';
-				introVid.play();
-			}, 0); //if you need it to start later, change that 0 (and also update the introDelay)
-
-			if (score[0] + score[1] == 0) { //if this is the first game, introduce players
-
-				for (let i = 0; i < maxSides; i++) {
-					const pIntroEL = document.getElementById('p'+(i+1)+'Intro');
-
-					//update players intro text
-					if (gamemode == 1) { //if singles, show player 1 and 2 names
-						pIntroEL.textContent = player[i].name;
-					} else { //if doubles
-						if (teamName[i] == color[i] + " Team") { //if theres no team name, show player names
-							pIntroEL.textContent = player[i].name + " & " + player[i+2].name;
-						} else { //else, show the team name
-							pIntroEL.textContent = teamName[i];
-						}
-					}
-
-					pIntroEL.style.fontSize = introSize; //resize the font to its max size
-					resizeText(pIntroEL); //resize the text if its too large
-
-					//change the color of the player text shadows
-					pIntroEL.style.textShadow = '0px 0px 20px ' + getHexColor(color[i]);
-					
-				};
-
-				//player 1 name fade in
-				gsap.fromTo("#p1Intro",
-					{x: -pMove}, //from
-					{delay: introDelay, x: 0, opacity: 1, ease: "power2.out", duration: fadeInTime}); //to
-
-				//same for player 2
-				gsap.fromTo("#p2Intro",
-					{x: pMove},
-					{delay: introDelay, x: 0, opacity: 1, ease: "power2.out", duration: fadeInTime});
-
-			} else { //if its not the first game, show game count
-				const midTextEL = document.getElementById('midTextIntro');
-				if ((score[0] + score[1]) != 4) { //if its not the last game of a bo5
-
-					//just show the game count in the intro
-					midTextEL.textContent = "Game " + (score[0] + score[1] + 1);
-
-				} else { //if game 5
-
-					if ((round.toUpperCase() == "True Finals".toUpperCase())) { //if true finals
-
-						midTextEL.textContent = "True Final Game"; //i mean shit gets serious here
-						
-					} else {
-
-						midTextEL.textContent = "Final Game";
-						
-						//if GF, we dont know if its the last game or not, right?
-						if (round.toLocaleUpperCase() == "Grand Finals".toLocaleUpperCase() && !(wl[0] == "L" && wl[1] == "L")) {
-							gsap.to("#superCoolInterrogation", {delay: introDelay+.5, opacity: 1, ease: "power2.out", duration: 1.5});
-						}
-
-					}
-				}
-			}
-
-			document.getElementById('roundIntro').textContent = round;
-			document.getElementById('tNameIntro').textContent = scInfo['tournamentName'];
-			
-			//round, tournament and VS/GameX text fade in
-			gsap.to(".textIntro", {delay: introDelay-.2, opacity: 1, ease: "power2.out", duration: fadeInTime});
-
-			//aaaaand fade out everything
-			gsap.to("#overlayIntro", {delay: introDelay+1.6, opacity: 0, ease: "power2.out", duration: fadeInTime+.2});
-
-			//lets delay everything that comes after this so it shows after the intro
-			introDelay = 2.6;
-		}
-
-
-		//if this isnt a singles match, rearrange stuff
-		if (gamemode != 1) {
-			changeGM(gamemode);
-		}
-		gamemodePrev = gamemode;
-
+		colorList = await getColorInfo();
 
 		//this is on top of everything else because the await would desync the rest
 		for (let i = 0; i < maxPlayers; i++) { //for each available player
@@ -203,9 +100,9 @@ async function getData(scInfo) {
 				const movement = (i % 2 == 0) ? -pMove : pMove; //to know direction
 				gsap.fromTo(pWrapper[i], 
 					{x: movement}, //from
-					{delay: introDelay, x: 0, opacity: 1, ease: "power2.out", duration: fadeInTime}); //to
+					{x: 0, opacity: 1, ease: "power2.out", duration: fadeInTime}); //to
 			} else { //if doubles, just fade them in
-				fadeIn(pWrapper[i], introDelay+.15)
+				fadeIn(pWrapper[i], .15)
 			}
 			
 
@@ -221,27 +118,13 @@ async function getData(scInfo) {
 
 		// this will run for each side (so twice)
 		for (let i = 0; i < maxSides; i++) {
-
-			//set the team names if not singles
-			if (gamemode != 1) {
-				updateText(teamNames[i], teamName[i], nameSize);
-				const movement = (i % 2 == 0) ? -pMove : pMove;
-				gsap.fromTo(teamNames[i], 
-					{x: movement},
-					{delay: introDelay, x: 0, opacity: 1, ease: "power2.out", duration: fadeInTime});
-			}
 			
 			//if its grands, we need to show the [W] and/or the [L] on the players
 			updateWL(wl[i], i, gamemode);
 			if (gamemode == 1) {
 				gsap.fromTo(wlImg[i], //if singles, move it vertically
 					{y: -pMove}, //set starting position some pixels up (it will be covered by the overlay)
-					{delay: introDelay+.5, y: 0, ease: "power2.out", duration: .5}); //move down to its default position
-			} else {
-				const movement = (i % 2 == 0) ? -pMove : pMove;
-				gsap.fromTo(wlImg[i], //if doubles, move it horizontally
-					{x: movement*3}, //set starting position some pixels up (it will be covered by the overlay)
-					{delay: introDelay+.5, x: 0, ease: "power2.out", duration: .5}); //move down to its default position
+					{delay: .5, y: 0, ease: "power2.out", duration: .5}); //move down to its default position
 			}
 			//save for later so the animation doesn't repeat over and over
 			wlPrev[i] = wl[i];
@@ -257,8 +140,6 @@ async function getData(scInfo) {
 			//check if we have a logo we can place on the overlay
 			if (gamemode == 1) { //if this is singles, check the player tag
 				updateLogo(tLogoImg[i], player[i].tag, i, gamemode);
-			} else { //if doubles, check the team name
-				updateLogo(tLogoImg[i], teamName[i], i, gamemode);
 			}
 			
 		}
@@ -266,7 +147,7 @@ async function getData(scInfo) {
 
 		//update the round text	and fade it in
 		updateText(textRound, round, roundSize);
-		fadeIn(overlayRound, introDelay);
+		fadeIn(overlayRound, 0);
 
 
 		//dont forget to update the border if its Bo3 or Bo5!
@@ -282,22 +163,6 @@ async function getData(scInfo) {
 
 	//now things that will happen constantly
 	else {
-
-		//of course, check if the gamemode has changed
-		if (gamemodePrev != gamemode) {
-			changeGM(gamemode);
-			updateBorder(bestOf, gamemode);
-			for (let i = 0; i < maxSides; i++) {
-				updateWL(wl[i], i, gamemode);
-				if (gamemode == 1) {
-					updateLogo(tLogoImg[i], player[i].tag, i, gamemode);
-				} else {
-					updateLogo(tLogoImg[i], teamName[i], i, gamemode);
-				}
-			}			
-			gamemodePrev = gamemode;
-		}
-		
 
 		//get the character lists now before we do anything else
 		for (let i = 0; i < maxPlayers; i++) {
@@ -352,19 +217,6 @@ async function getData(scInfo) {
 
 		//now let's check stuff from each side
 		for (let i = 0; i < maxSides; i++) {
-
-			//check if the team names changed
-			if (gamemode != 1) {
-
-				const movement = i % 2 == 0 ? -pMove : pMove;
-
-				if (teamNames[i].textContent != teamName[i]) {
-					fadeOutMove(teamNames[i], movement, () => {
-						updateText(teamNames[i], teamName[i], nameSize);
-						fadeInMove(teamNames[i]);
-					});
-				}
-			}
 			
 			//the [W] and [L] status for grand finals
 			if (wlPrev[i] != wl[i]) {
@@ -399,15 +251,7 @@ async function getData(scInfo) {
 						fadeIn(tLogoImg[i]);
 					});
 				}
-			} else { //if doubles, check the team name
-				if (teamNames[i].textContent != teamName[i]) {
-					fadeOut(tLogoImg[i], () => {
-						updateLogo(tLogoImg[i], teamName[i], i, gamemode);
-						fadeIn(tLogoImg[i]);
-					});
-				}
 			}
-
 
 		}
 
@@ -605,7 +449,7 @@ function fadeInChara(charaEL, charScale, startup) {
 	if (startup) {
 		gsap.fromTo(charaEL,
 			{x: -pCharMove},
-			{delay: introDelay+.20, x: 0, opacity: 1, ease: "power2.out", duration: fadeInTime});
+			{delay: .20, x: 0, opacity: 1, ease: "power2.out", duration: fadeInTime});
 	} else {
 		gsap.fromTo(charaEL,
 			{scale: charScale}, //set scale keyframe so it doesnt scale while transitioning
