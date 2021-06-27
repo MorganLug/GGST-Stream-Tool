@@ -36,9 +36,34 @@ body {
     right: 0px;
     transform: scaleX(-1);
 }
+
+.globalOverlay {
+    position: absolute;
+    left: 0px;
+}
+
 .scoreboardP2Fixed {
     position: absolute;
     right: 0px;
+}
+
+.scoreTexts {
+    position: absolute;
+    text-align: center;
+    opacity: 1;
+    white-space: nowrap;
+    width: 45px;
+    height: 45px;
+    top: 40px;
+    line-height: 45px;
+}
+
+
+#p1ScoreText {
+    left: 711px;
+}
+#p2ScoreText {
+    right: 711px;
 }
 
 
@@ -71,15 +96,8 @@ body {
     top: 45px;
 }
 
-#p2CharaMask, #p4CharaMask {
+#p2CharaMask {
     transform: scaleX(-1);
-}
-
-#p3CharaMask {
-    left: -18px;
-}
-#p4CharaMask {
-    right: -18px;
 }
 
 .pCharacter {
@@ -96,32 +114,18 @@ body {
     text-align: center;
     opacity: 0;
     white-space: nowrap;
-}
-.wrappersSingles {
-    width: 430px;
-    height: 54px;
-    line-height: 54px;
+    width: 450px;
+    height: 45px;
+    top: 40px;
+    line-height: 45px;
 }
 
-.wrappersDubs {
-    width: 126px;
-    height: 54px;
-    line-height: 54px;
-}
 
 #p1Wrapper {
-    left: 158px;
+    left: 232px;
 }
 #p2Wrapper {
-    right: 158px;
-}
-#p3Wrapper {
-    top: 40px;
-    left: 138px;
-}
-#p4Wrapper {
-    top: 40px;
-    right: 138px;
+    right: 232px;
 }
 
 .tags {
@@ -157,11 +161,11 @@ body {
 
 #round {
     position: absolute;
-    width: 215px;
-    height: 34px;
-    left: 853px;
-    top: 914px;
-    line-height: 32px;
+    width: 270px;
+    height: 40px;
+    left: 825px;
+    top: 220px;
+    line-height: 40px;
     text-align: center;
     font-family: "Roboto";
     white-space: nowrap;

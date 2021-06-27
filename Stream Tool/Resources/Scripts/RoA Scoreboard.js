@@ -9,11 +9,11 @@ const fadeOutTime = .2;
 
 //max text sizes (used when resizing back)
 const introSize = "85px";
-const nameSize = "30px";
-const tagSize = "20px";
-const nameSizeDubs = "22px";
-const tagSizeDubs = "15px";
-const roundSize = "19px";
+const nameSize = "45px";
+const scoreSize = "45px";
+const tagSize = "30px";
+
+const roundSize = "40px";
 
 //to store the current character info
 const pCharInfo = [];
@@ -26,15 +26,11 @@ let colorList;
 
 //to avoid the code constantly running the same method over and over
 const pCharPrev = [], pSkinPrev = [], scorePrev = [], colorPrev = [], wlPrev = [];
-let bestOfPrev, mainMenuPrev;
+let mainMenuPrev;
 
 //to consider how many loops will we do
 let maxPlayers = 2;
 const maxSides = 2;
-
-//svg paths for the colors, 1 for Singles and 2 for Dubs
-const colorPath1 = "m 0,0 3.818e-5,16.32621 30.04434582,7.358723 2.100135,-0.314192 3.208067,-7.920963 H 162.45181 L 168.33879,0 h -6.96663 l -5.58928,14.381247 H 35.719909 L 41.352445,0 Z"
-const colorPath2 = "M 0,0 3.818e-5,24.05297 69.267529,23.684933 72.676776,15.449778 H 162.45181 L 168.33879,0 h -6.96663 l -5.58928,14.381247 H 73.044099 L 78.676635,0 Z"
 
 let startup = true;
 
@@ -46,12 +42,10 @@ const pName = document.getElementsByClassName("names");
 const charImg = document.getElementsByClassName("pCharacter");
 const colorImg = document.getElementsByClassName("colors");
 const wlImg = document.getElementsByClassName("wlImg");
-const scoreImg = document.getElementsByClassName("scoreImgs");
-const scoreAnim = document.getElementsByClassName("scoreVid");
+const scoreText = document.getElementsByClassName("scoreTexts");
 const tLogoImg = document.getElementsByClassName("tLogos");
 const overlayRound = document.getElementById("overlayRound");
 const textRound = document.getElementById('round');
-const borderImg = document.getElementsByClassName('border');
 
 
 /* script begin */
@@ -65,12 +59,9 @@ setInterval( () => { mainLoop(); }, 500); //update interval
 async function getData(scInfo) {
 
 	const player = scInfo['player'];
-
 	const color = scInfo['color'];
 	const score = scInfo['score'];
 	const wl = scInfo['wl'];
-
-	const bestOf = scInfo['bestOf'];
 	const gamemode = scInfo['gamemode'];
 
 	const round = scInfo['round'];
@@ -130,7 +121,11 @@ async function getData(scInfo) {
 			wlPrev[i] = wl[i];
 
 			//set the current score
-			updateScore(score[i], bestOf, color[i], i, gamemode, false);
+			updateScore(score[i], i);
+			const movement = (i % 2 == 0) ? -pMove : pMove; //to know direction
+			gsap.fromTo(scoreText[i], 
+				{x: movement}, //from
+				{x: 0, opacity: 1, ease: "power2.out", duration: fadeInTime}); //to
 			scorePrev[i] = score[i];
 
 			//set the color
@@ -141,18 +136,13 @@ async function getData(scInfo) {
 			if (gamemode == 1) { //if this is singles, check the player tag
 				updateLogo(tLogoImg[i], player[i].tag, i, gamemode);
 			}
-			
+
 		}
 
 
 		//update the round text	and fade it in
 		updateText(textRound, round, roundSize);
 		fadeIn(overlayRound, 0);
-
-
-		//dont forget to update the border if its Bo3 or Bo5!
-		updateBorder(bestOf, gamemode);
-
 
 		//set this for later
 		mainMenuPrev = mainMenu;
@@ -191,11 +181,6 @@ async function getData(scInfo) {
 						//fade the name back in with a sick movement
 						fadeInMove(pWrapper[i]);
 					});
-				} else { //if not singles, dont move the texts
-					fadeOut(pWrapper[i], () => {
-						updatePlayerName(i, player[i].name, player[i].tag, gamemode);
-						fadeIn(pWrapper[i]);
-					});
 				}
 				
 			}
@@ -233,7 +218,16 @@ async function getData(scInfo) {
 
 			//score check
 			if (scorePrev[i] != score[i]) {
-				updateScore(score[i], bestOf, color[i], i, gamemode, true); //if true, animation will play
+				//check the player's side so we know the direction of the movement
+				const movement = (i % 2 == 0) ? -pMove : pMove;
+
+				fadeOutMove(scoreText[i], movement, () => {
+					//now that nobody is seeing it, quick, change the text's content!
+					updateScore(score[i], i); //if true, animation will pla
+					//fade the name back in with a sick movement
+					fadeInMove(scoreText[i]);
+				});
+
 				scorePrev[i] = score[i];
 			}
 
@@ -259,15 +253,6 @@ async function getData(scInfo) {
 		//we place this one here so both characters can be updated in one go
 		mainMenuPrev = mainMenu;
 
-
-		//change border depending of the Best Of status
-		if (bestOfPrev != bestOf) {
-			updateBorder(bestOf, gamemode); //update the border
-			//update the score ticks so they fit the bestOf border
-			updateScore(score[0], bestOf, color[0], 0, gamemode, false);
-			updateScore(score[1], bestOf, color[1], 1, gamemode, false);
-		}
-
 		
 		//and finally, update the round text
 		if (textRound.textContent != round){
@@ -281,109 +266,15 @@ async function getData(scInfo) {
 }
 
 
-// the gamemode manager
-function changeGM(gm) {
-			
-	if (gm == 2) {
-
-		maxPlayers = 4;
-
-		//change the positions for the character images
-		const charTop = document.getElementsByClassName("charTop");
-		for (let i = 0; i < charTop.length; i++) {
-			charTop[i].parentElement.classList.remove("maskSingles");
-			charTop[i].parentElement.classList.add("maskDubs");
-			charTop[i].style.top = "-15px"
-		}
-
-		//change the positions for the player texts
-		for (let i = 0; i < 2; i++) {
-			pWrapper[i].classList.remove("wrappersSingles");
-			pWrapper[i].classList.add("wrappersDubs");
-			pWrapper[i].style.top = "-5px";
-			//update the text size and resize it if it overflows
-			pName[i].style.fontSize = nameSizeDubs;
-			pTag[i].style.fontSize = tagSizeDubs;
-			resizeText(pWrapper[i]);
-		}
-		pWrapper[0].style.left = "155px";
-		pWrapper[1].style.right = "155px";
-
-		//change the color paths
-		for (let i = 0; i < 2; i++) {
-			colorImg[i].firstElementChild.setAttribute("d", colorPath2);			
-		}
-
-		//show all hidden elements
-		const dubELs = document.getElementsByClassName("dubEL");
-		for (let i = 0; i < dubELs.length; i++) {
-			dubELs[i].style.display = "block";
-		}
-
-	} else {
-
-		maxPlayers = 2
-
-		const charTop = document.getElementsByClassName("charTop");
-		for (let i = 0; i < charTop.length; i++) {
-			charTop[i].parentElement.classList.remove("maskDubs");
-			charTop[i].parentElement.classList.add("maskSingles");
-			charTop[i].style.top = "0px"
-		}
-
-		for (let i = 0; i < 2; i++) {
-			pWrapper[i].classList.remove("wrappersDubs");
-			pWrapper[i].classList.add("wrappersSingles");
-			pWrapper[i].style.top = "0px";
-			pName[i].style.fontSize = nameSize;
-			pTag[i].style.fontSize = tagSize;
-			resizeText(pWrapper[i]);
-		}
-		pWrapper[0].style.left = "158px";
-		pWrapper[1].style.right = "158px";
-
-		for (let i = 0; i < 2; i++) {
-			colorImg[i].firstElementChild.setAttribute("d", colorPath1);			
-		}
-
-		const dubELs = document.getElementsByClassName("dubEL");
-		for (let i = 0; i < dubELs.length; i++) {
-			dubELs[i].style.display = "none";
-		}
-		
-	}
-
-}
-
-
 // update functions
-function updateScore(pScore, bestOf, pColor, pNum, gamemode, playAnim) {
-
-	let delay = 0;
-	if (playAnim) { //do we want to play the score up animation?
-		//depending on the "bestOf" and the color, change the clip
-		scoreAnim[pNum].src = 'Resources/Overlay/Scoreboard/Score/' + gamemode + "/" + bestOf + '/' + pColor + '.webm';
-		scoreAnim[pNum].play();
-		delay = 200; //add a bit of delay so the score change fits with the vid
-	}
-
-	//set timeout to the actual image change so it fits with the animation (if it played)
-	setTimeout(() => {
-		//change the image depending on the bestOf status and, of course, the current score
-		scoreImg[pNum].src = 'Resources/Overlay/Scoreboard/Score/Win Tick ' + bestOf + ' ' + pScore + '.png';
-	}, delay);
+function updateScore(pScore, pNum) {
+	scoreText[pNum].style.fontSize = scoreSize;
+	scoreText[pNum].textContent = parseInt(pScore);
 
 }
 
 function updateColor(colorEL, pColor) {
 	gsap.to(colorEL, {fill: getHexColor(pColor), duration: fadeInTime});
-}
-
-function updateBorder(bestOf, gamemode) {
-	for (let i = 0; i < borderImg.length; i++) {
-		borderImg[i].src = 'Resources/Overlay/Scoreboard/Borders/Border ' + gamemode + " " + bestOf + '.png';
-	}
-	bestOfPrev = bestOf
 }
 
 function updateLogo(logoEL, nameLogo, side, gamemode) {
@@ -393,13 +284,8 @@ function updateLogo(logoEL, nameLogo, side, gamemode) {
 }
 
 function updatePlayerName(pNum, name, tag, gamemode) {
-	if (gamemode == 2) {
-		pName[pNum].style.fontSize = nameSizeDubs; //set original text size
-		pTag[pNum].style.fontSize = tagSizeDubs;
-	} else {
-		pName[pNum].style.fontSize = nameSize;
-		pTag[pNum].style.fontSize = tagSize;
-	}
+	pName[pNum].style.fontSize = nameSize;
+	pTag[pNum].style.fontSize = tagSize;
 	pName[pNum].textContent = name; //change the actual text
 	pTag[pNum].textContent = tag;
 	resizeText(pWrapper[pNum]); //resize if it overflows
