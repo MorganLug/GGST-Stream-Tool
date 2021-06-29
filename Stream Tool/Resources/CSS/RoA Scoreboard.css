@@ -1,11 +1,11 @@
 @font-face {
-    font-family: "Deansgate";
-    src: url('../Fonts/DeansgateCondensed-Bold.ttf');
+    font-family: "Cezanne";
+    src: url('../Fonts/FOT-Cezanne\ Pro\ B.ttf');
 }
 
 @font-face {
-    font-family: "Roboto";
-    src: url('../Fonts/Roboto-Bold.ttf');
+    font-family: "RED";
+    src: url('../Fonts/RED.ttf');
 }
 
 @font-face {
@@ -23,7 +23,7 @@ body {
     margin: 0px;
     text-transform: uppercase;
     color: white;
-    font-family: "Deansgate";
+    font-family: "Cezanne";
 }
 
 
@@ -56,6 +56,7 @@ body {
     height: 45px;
     top: 40px;
     line-height: 45px;
+    font-family: "RED";
 }
 
 
@@ -167,7 +168,7 @@ body {
     top: 220px;
     line-height: 40px;
     text-align: center;
-    font-family: "Roboto";
+    font-family: "LemonMilk";
     white-space: nowrap;
 }
 
