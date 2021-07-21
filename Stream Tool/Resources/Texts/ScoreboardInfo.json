@@ -1,28 +1,16 @@
 {
   "player": [
     {
-      "name": "",
-      "tag": "",
-      "character": "Random",
-      "skin": ""
+      "name": "P1",
+      "tag": "T1",
+      "character": "Chipp",
+      "skin": "Default"
     },
     {
-      "name": "",
-      "tag": "",
-      "character": "Random",
-      "skin": ""
-    },
-    {
-      "name": "",
-      "tag": "",
-      "character": "Random",
-      "skin": ""
-    },
-    {
-      "name": "",
-      "tag": "",
-      "character": "Random",
-      "skin": ""
+      "name": "P2",
+      "tag": "T2",
+      "character": "Axl",
+      "skin": "Default"
     }
   ],
   "color": [
@@ -30,31 +18,28 @@
     "Blue"
   ],
   "score": [
-    3,
-    5
+    0,
+    0
   ],
   "wl": [
     "Nada",
     "Nada"
   ],
-  "bestOf": "Bo9",
+  "bestOf": "Bo3",
   "gamemode": 1,
-  "round": "",
-  "tournamentName": "",
+  "round": "TestRound",
+  "tournamentName": "TestTour",
   "caster": [
     {
-      "name": "",
+      "name": "aa",
       "twitter": "",
       "twitch": ""
     },
     {
-      "name": "",
+      "name": "bb",
       "twitter": "",
       "twitch": ""
     }
   ],
-  "allowIntro": false,
-  "forceHD": false,
-  "noLoAHD": false,
-  "forceMM": false
+  "allowIntro": false
 }

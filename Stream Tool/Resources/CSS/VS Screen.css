@@ -1,6 +1,6 @@
 @font-face {
-    font-family: "Deansgate";
-    src: url('../Fonts/DeansgateCondensed-Bold.ttf');
+    font-family: "Cezanne";
+    src: url('../Fonts/FOT-Cezanne\ Pro\ B.ttf');
 }
 
 @font-face {
@@ -185,7 +185,7 @@ body {
 .roundInfo {
     position: absolute;
     text-align: center;
-    font-family: "Deansgate";
+    font-family: "Cezanne";
     white-space: nowrap;
 }
 
@@ -219,7 +219,7 @@ body {
     height: 34px;
     top: 130px;
     text-align: center;
-    font-family: "Deansgate";
+    font-family: "Cezanne";
     color: black;
     line-height: 26px;
     white-space: nowrap;
@@ -240,7 +240,7 @@ body {
     height: 30px;
     top: 162px;
     text-align: center;
-    font-family: "Deansgate";
+    font-family: "Cezanne";
     color: rgb(65, 65, 65);
     line-height: 26px;
     white-space: nowrap;
